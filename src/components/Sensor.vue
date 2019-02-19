@@ -368,7 +368,7 @@ export default {
         .catch(error => {
           console.log(error);
         });
-    }, 3000);
+    }, 1000);
   },
   destroyed() {
     clearInterval(this.handle);
