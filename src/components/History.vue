@@ -2,6 +2,14 @@
   <v-card>
     <v-card-title>
       <v-toolbar-title>History table</v-toolbar-title>
+      <v-radio-group v-model="radios" row class="ml-5">
+        <v-radio value="radio-1" color="primary">
+          <div slot="label"><strong class="black--text">Daily</strong></div>
+        </v-radio>
+        <v-radio value="radio-2" color="primary">
+          <div slot="label"><strong class="black--text">Monthly</strong></div>
+        </v-radio>
+    </v-radio-group>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
@@ -17,7 +25,7 @@
       :search="search"
       :pagination.sync = "pagination"
     >
-      <template slot="items" slot-scope="props">
+      <template slot="items" slot-scope="props" v-if="radios=='radio-2'">
         <router-link tag="tr" to="/statistic" onclick="window.location.reload(true);">
           <td class="text-xs-left">{{ props.item.name }}</td>
           <td class="text-xs-left">{{ props.item.calories }}</td>
@@ -37,6 +45,8 @@
   export default {
     data () {
       return {
+        row: null,
+        radios: 'radio-1',
         pagination: {
           rowsPerPage: -1
         },

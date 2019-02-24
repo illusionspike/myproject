@@ -6,6 +6,7 @@ import Login from './views/Login.vue'
 import Register from './views/Signup.vue'
 import Statistic from './views/Statistic.vue'
 import Sleep from './components/Sleep.vue'
+import test from './views/test.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -41,6 +42,11 @@ export default new Router({
       path: '/sleep',
       name: 'sleep',
       component: Sleep
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: test
     }
   ]
 })

@@ -1,5 +1,5 @@
 <template>
- <v-app id="inspire">
+ <v-app>
     <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
@@ -9,19 +9,25 @@
                 <v-toolbar-title>Sign up</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <v-form v-model='valid' ref='form' lazy-validation>
+                <v-form>
                   <v-container>
                     <v-layout row wrap>
                         <v-flex xs12 md6>
                             <v-text-field
-                            label="Firstname"
-                            v-model="User.first_name"
+                            v-model="first_name"
+                            :error-messages="nameErrors"
+                            label="Name"
+                            required
+                            @blur="$v.first_name.$touch()"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md6>
                             <v-text-field
-                            label="Lastname"
-                            v-model="User.last_name"
+                            v-model="last_name"
+                            :error-messages="surnameErrors"
+                            label="Surname"
+                            required
+                            @blur="$v.last_name.$touch()"
                             ></v-text-field>
                         </v-flex>
                     </v-layout>
@@ -40,29 +46,41 @@
                             <v-text-field
                               label="Date of Birth"
                               slot="activator"
-                              v-model="User.date"
+                              v-model="date"
+                              :error-messages="dateErrors"
                               prepend-icon="event"
+                              @blur="$v.date.$touch()"
                               readonly
+                              required
                             ></v-text-field>
-                            <v-date-picker v-model="User.date" @input="menu2 = false" @change="save(User.date)"></v-date-picker>
+                            <v-date-picker v-model="date" @input="menu2 = false" @change="save(date)"></v-date-picker>
                           </v-menu>
                         </v-flex> 
                         <v-flex xs12 md2>
                             <v-text-field
                             label="Age"
-                            v-model="User.age"
+                            v-model="age"
+                            :error-messages="ageErrors"
+                            required
+                            @blur="$v.age.$touch()"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md2>
                             <v-text-field
                             label="Height (cm)"
-                            v-model="User.height"
+                            v-model="height"
+                            :error-messages="heightErrors"
+                            required
+                            @blur="$v.height.$touch()"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md2>
                             <v-text-field
                             label="Weight (kg)"
-                            v-model="User.weight"
+                            v-model="weight"
+                            :error-messages="weightErrors"
+                            required
+                            @blur="$v.weight.$touch()"
                             ></v-text-field>
                         </v-flex> 
                     </v-layout>
@@ -70,29 +88,41 @@
                         <v-flex xs12 md6>
                             <v-text-field
                             label="Username"
-                            v-model="User.username"
+                            v-model="username"
+                            :error-messages="usernameErrors"
+                            required
+                            @blur="$v.username.$touch()"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md6>
                             <v-text-field
+                             v-model="email"
+                            :error-messages="emailErrors"
                             label="E-mail"
-                            v-model="User.email"
+                            required
+                            @blur="$v.email.$touch()"
                             ></v-text-field>
                         </v-flex>
                     </v-layout>
                     <v-layout row wrap>
                         <v-flex xs12 md6>
                             <v-text-field
-                            label="Password"
                             type="password"
-                            v-model="User.password"
+                            v-model="password"
+                            :error-messages="passwordErrors"
+                            label="Password"
+                            required
+                            @blur="$v.password.$touch()"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md6>
                             <v-text-field
                             label="Confirm password"
                             type="password"
-                            v-model="User.confirm_password"
+                            v-model="confirm_password"
+                            :error-messages="confirmpasswordErrors"
+                            required
+                            @blur="$v.confirm_password.$touch()"
                             ></v-text-field>
                         </v-flex>
                     </v-layout>
@@ -102,6 +132,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn @click='submit' color="primary">Sign up</v-btn>
+                <v-btn @click='clear' color="error">Clear</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -114,30 +145,121 @@
 <script>
 // eslint-disable-next-line
 /* eslint-disable */
+import { validationMixin } from 'vuelidate'
+import { required, minLength, email, sameAs,between } from 'vuelidate/lib/validators'
 import axios from 'axios'
   export default {
+    mixins: [validationMixin],
+    validations: {
+      first_name: { required},
+      last_name:{required},
+      date:{required},
+      username:{required,minLength: minLength(4)},
+      email: { required, email },
+      password: { required},
+      confirm_password: {required,sameAsPassword: sameAs('password')},
+      age: { required},
+      height: { required},
+      weight: { required}, 
+    },
     data: () => ({
-      date: null,
-      User: {
+        date: null,
         first_name: '',
         last_name: '',
-        date:'',
+        username: '',
+        email:'', 
+        password: '',
+        confirm_password:'',
         age:'',
         height: '',
-        weight: '',
-        username: '',
-        email: '',
-        password: '',
-        confirm_password:''
-      },
+        weight: '', 
       menu2: false
     }),
+    computed:{
+      emailErrors () {
+        const errors = []
+        if (!this.$v.email.$dirty) return errors
+        !this.$v.email.email && errors.push('Must be valid e-mail')
+        !this.$v.email.required && errors.push('E-mail is required')
+        return errors
+      },
+      nameErrors () {
+        const errors = []
+        if (!this.$v.first_name.$dirty) return errors
+        !this.$v.first_name.required && errors.push('Name is required.')
+        return errors
+      },
+      surnameErrors () {
+        const errors = []
+        if (!this.$v.last_name.$dirty) return errors
+        !this.$v.last_name.required && errors.push('Surname is required.')
+        return errors
+      },
+      dateErrors () {
+        const errors = []
+        if (!this.$v.date.$dirty) return errors
+        !this.$v.date.required && errors.push('Birthday is required.')
+        return errors
+      },
+      passwordErrors () {
+        const errors = []
+        if (!this.$v.password.$dirty) return errors
+        !this.$v.password.required && errors.push('Password is required.')
+        return errors
+      },
+      confirmpasswordErrors () {
+        const errors = []
+        if (!this.$v.confirm_password.$dirty) return errors
+        !this.$v.confirm_password.required && errors.push('Confirm password is required.')
+        !this.$v.confirm_password.sameAsPassword && errors.push('Passwords must be identical')
+        return errors
+      },
+      usernameErrors () {
+        const errors = []
+        if (!this.$v.username.$dirty) return errors
+        !this.$v.username.minLength && errors.push('Username must have at least '+this.$v.username.$params.minLength.min+' letters')
+        !this.$v.username.required && errors.push('Username is required.')
+        return errors
+      },
+      ageErrors () {
+        const errors = []
+        if (!this.$v.age.$dirty) return errors
+        !this.$v.age.required && errors.push('Age is required.')
+        return errors
+      },
+      heightErrors () {
+        const errors = []
+        if (!this.$v.height.$dirty) return errors
+        !this.$v.height.required && errors.push('Height is required.')
+        return errors
+      },
+      weightErrors () {
+        const errors = []
+        if (!this.$v.weight.$dirty) return errors
+        !this.$v.weight.required && errors.push('Weight is required.')
+        return errors
+      },
+    },
     methods: {
       save (date) {
         this.$refs.menu.save(date)
       },
+      clear(){
+        this.$v.$reset()
+        this.date = null
+        this.first_name = ''
+        this.last_name = ''
+        this.username = ''
+        this.email = ''
+        this.password = ''
+        this.confirm_password = ''
+        this.age = ''
+        this.height = ''
+        this.weight = ''
+      },
       submit (){
-        let newUser = {
+        this.$v.$touch()
+        /*let newUser = {
           first_name: this.User.first_name,
           last_name: this.User.last_name,
           date: this.User.date,
@@ -156,7 +278,7 @@ import axios from 'axios'
         })
         .catch(function(err){
           console.log(err)
-        });
+        });*/
       }
     }
   }

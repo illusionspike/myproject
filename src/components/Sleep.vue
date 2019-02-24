@@ -60,6 +60,8 @@
 <script>
 // eslint-disable-next-line
 /* eslint-disable */
+import Chart from 'chart.js';
+
     export default {
         data(){
            return{
@@ -69,12 +71,13 @@
         mounted() {
             var chart = this.$refs.chart;
             var ctx = chart.getContext("2d");
+            Chart.defaults.global.defaultFontSize = 20;
             var myChart = new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: ["Supine", "Lying left", "Lying right", "Sit on bed", "Get out of bed"],
                 datasets: [{
-                data: ['12%', '19%', 3, 5, 2],
+                data: [12, 19, 3, 5, 2],
                 backgroundColor: [
                     'rgba(255, 99, 132, 1)',
                     'rgba(54, 162, 235, 1)',
@@ -89,8 +92,21 @@
                     'rgba(75, 192, 192, 1)',
                     'rgba(153, 102, 255, 1)'
                 ],
-                borderWidth: 1
-                }]
+                borderWidth: 1,
+                hoverBorderWidth:3,
+                hoverBorderColor: 'black',
+
+
+                }],
+            },
+            options: {
+                responsive: true,
+                
+                legend: {
+                    position: 'right',
+                },
+                
+
             }
         });
    }
