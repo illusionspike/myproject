@@ -1,26 +1,17 @@
 <template>
-  <div id="app">
-    <canvas id="graph" width="400" height="400"></canvas>
+  <div>
+    <line-chart></line-chart>
   </div>
 </template>
 
 <script>
 // eslint-disable-next-line
-/* eslint-disable */
-import Chart from 'chart.js'
+// eslint-disable-next-line
+import LineChart from '@/components/linechart'
 export default {
-  mounte(){
-    var ctx = document.getElementById('graph').getContext('2d');
-    var bar = new Chart(ctx,{
-      type: 'bar',
-      data:{
-        labels:['1','2','3']
-      },
-      datasets:[{
-        label: '# of vote',
-        data: [12,14,15]
-      }]
-    })
+    name: 'test',
+    components: {
+      LineChart,
+    }
   }
-}
 </script>

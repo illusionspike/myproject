@@ -15,6 +15,7 @@
                 <canvas ref="chart"></canvas>
             </div>
         </div>
+        <Time/>
     </v-card-text>
     </v-card>
     <br>
@@ -60,9 +61,13 @@
 <script>
 // eslint-disable-next-line
 /* eslint-disable */
-import Chart from 'chart.js';
 
+import Chart from 'chart.js';
+import Time from '@/components/Time'
     export default {
+        components:{
+            Time,
+        },
         data(){
            return{
 
@@ -105,8 +110,6 @@ import Chart from 'chart.js';
                 legend: {
                     position: 'right',
                 },
-                
-
             }
         });
    }

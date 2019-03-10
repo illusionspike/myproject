@@ -336,7 +336,7 @@ export default {
           console.log(error);
         });
         axios
-        .get("http://35.240.187.85:4000/readclass/1")
+        .get("http://35.240.187.85:4000/readpre/test/1")
         .then(response => {
           this.classes = response.data;
           this.classesVal = this.classes[0].class.toString();
@@ -359,7 +359,7 @@ export default {
           console.log(error);
         });
         axios
-        .get("http://35.240.187.85:4000/readclass/1")
+        .get("http://35.240.187.85:4000/readpre/test/1")
         .then(response => {
           this.classes = response.data;
           this.classesVal = this.classes[0].class.toString();

@@ -25,7 +25,7 @@
       :search="search"
       :pagination.sync = "pagination"
     >
-      <template slot="items" slot-scope="props" v-if="radios=='radio-2'">
+      <template slot="items" slot-scope="props" v-if="radios=='radio-1'">
         <router-link tag="tr" to="/statistic" onclick="window.location.reload(true);">
           <td class="text-xs-left">{{ props.item.name }}</td>
           <td class="text-xs-left">{{ props.item.calories }}</td>
@@ -60,22 +60,22 @@
           { text: 'Date', value: 'calories' },
           { text: 'Start', value: 'fat' },
           { text: 'End', value: 'carbs' },
-          { text: 'Total sleep time', value: 'protein' },
+          { text: 'Total sleep time (Hr)', value: 'protein' },
         ],
         desserts: [
           {
             name: 1,
             calories: '29/01/2019',
-            fat: 21.00,
-            carbs: 6.00,
-            protein: 9
+            fat: '21:00',
+            carbs: '6:00',
+            protein: '9 Hr'
           },
           {
             name: 2,
             calories: '30/01/2019',
-            fat: 23.00,
-            carbs: 6.00,
-            protein: 7
+            fat: '23:00',
+            carbs: '6:00',
+            protein: '7 Hr'
           }
         ]
       }
