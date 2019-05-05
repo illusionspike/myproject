@@ -60,7 +60,7 @@
           axios
           .get('http://35.197.155.73:4000/logout')
           .then(response => {
-            console.log(response)
+            console.log(response.data)
           })
           .catch(error => {
             console.log(error);
