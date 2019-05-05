@@ -20,19 +20,38 @@
       ></v-text-field>
     </v-card-title>
     <v-data-table
-      :headers="headers"
-      :items="desserts"
+      :headers="headerDay"
+      :items="historyDay"
       :search="search"
       :pagination.sync = "pagination"
+      v-if="radios=='radio-1'"
     >
-      <template slot="items" slot-scope="props" v-if="radios=='radio-1'">
-        <router-link tag="tr" to="/statistic" onclick="window.location.reload(true);">
-          <td class="text-xs-left">{{ props.item.name }}</td>
-          <td class="text-xs-left">{{ props.item.calories }}</td>
-          <td class="text-xs-left">{{ props.item.fat }}</td>
-          <td class="text-xs-left">{{ props.item.carbs }}</td>
-          <td class="text-xs-left">{{ props.item.protein }}</td>
-        </router-link>
+      <template slot="items" slot-scope="props">
+        <tr @click="nextDaily(props.item.date,props.item.start)">
+          <td class="text-xs-left">{{ props.item.date }}</td>
+          <td class="text-xs-left">{{ props.item.start }}</td>
+          <td class="text-xs-left">{{ props.item.end }}</td>
+          <td class="text-xs-left">{{ props.item.total}}</td>
+          <td class="text-xs-left">{{ props.item.score_total}}</td>
+        </tr>
+      </template>
+      <v-alert slot="no-results" :value="true" color="error" icon="warning">
+        Your search for "{{ search }}" found no results.
+      </v-alert>
+    </v-data-table>
+      <v-data-table
+      :headers="headerMonth"
+      :items="historyMonth"
+      :search="search"
+      :pagination.sync = "pagination"
+      v-if="radios=='radio-2'"
+    >
+      <template slot="items" slot-scope="props">
+        <tr @click="nextMonth(props.item.date)">
+          <td class="text-xs-left">{{ props.item.date }}</td>
+          <td class="text-xs-left">{{ props.item.total}}</td>
+           <td class="text-xs-left">{{ props.item.score_total}}</td>
+        </tr>
       </template>
       <v-alert slot="no-results" :value="true" color="error" icon="warning">
         Your search for "{{ search }}" found no results.
@@ -42,42 +61,75 @@
 </template>
 
 <script>
+// eslint-disable-next-line
+/* eslint-disable */ 
+import axios from "axios";
+import router from '../router'
   export default {
     data () {
       return {
+        username:'',
         row: null,
         radios: 'radio-1',
         pagination: {
           rowsPerPage: -1
         },
         search: '',
-        headers: [
+        headerDay: [
           {
-            text: 'NO',
+            text: 'Date (YY/MM/DD)',
             align: 'left',
-            value: 'name'
+            value: 'date'
           },
-          { text: 'Date', value: 'calories' },
-          { text: 'Start', value: 'fat' },
-          { text: 'End', value: 'carbs' },
-          { text: 'Total sleep time (Hr)', value: 'protein' },
+          { text: 'Start (HH:MM:SS)', value: 'start' },
+          { text: 'End (HH:MM:SS)', value: 'end' },
+          { text: 'Total sleep time (Hr)', value: 'total' },
+          { text: 'Sleep quality score', value: 'score_total' }
         ],
-        desserts: [
+        headerMonth: [
           {
-            name: 1,
-            calories: '29/01/2019',
-            fat: '21:00',
-            carbs: '6:00',
-            protein: '9 Hr'
+            text: 'Month',
+            align: 'left',
+            value: 'date'
           },
-          {
-            name: 2,
-            calories: '30/01/2019',
-            fat: '23:00',
-            carbs: '6:00',
-            protein: '7 Hr'
-          }
-        ]
+          { text: 'Total sleep time (Hr)', value: 'total' },
+          { text: 'Sleep quality score', value: 'score_total'}
+        ],
+        historyDay:[],
+        historyMonth:[]
+      }
+    },
+    mounted(){
+    this.username = this.$localStorage.get('usernameLogin')
+       axios
+        .get("http://35.197.155.73:4000/readtable/"+this.username)
+        .then(response => {
+          this.historyDay = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+         axios
+        .get("http://35.197.155.73:4000/rtablemonth/"+this.username)
+        .then(response => {
+          this.historyMonth = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    methods:{
+      nextDaily(hisDate,hisTime){
+        var temp1 = this.hisDate
+        var temp2 = this.hisTime
+        this.$localStorage.set('Date', hisDate)
+        this.$localStorage.set('Time', hisTime)
+        router.replace('statistic/day')
+      },
+      nextMonth(hisMonth){
+        var temp1 = this.hisMonth
+        this.$localStorage.set('Month', hisMonth)
+        router.replace('statistic/month')
       }
     }
   }

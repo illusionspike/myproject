@@ -7,7 +7,7 @@
         <span class="font-weight-light"> Project</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-title>Supakit Dhamchatsoontree</v-toolbar-title>
+      <v-toolbar-title></v-toolbar-title>
     </v-toolbar>
   <v-container fluid fill-height>
     <v-layout row>

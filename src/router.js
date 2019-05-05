@@ -4,8 +4,8 @@ import Home from './views/Home.vue'
 import About from './views/About.vue'
 import Login from './views/Login.vue'
 import Register from './views/Signup.vue'
-import Statistic from './views/Statistic.vue'
-import Sleep from './components/Sleep.vue'
+import Statisticday from './views/Statisticday.vue'
+import Statisticmonth from './views/Statisticmonth.vue'
 import test from './views/test.vue'
 Vue.use(Router)
 
@@ -15,13 +15,19 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      redirect:{
+        name: 'login'
+      }
     },
     {
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: Home
     },
     {
       path: '/signup',
@@ -34,14 +40,14 @@ export default new Router({
       component: About
     },
     {
-      path: '/statistic',
-      name: 'statistic',
-      component: Statistic
+      path: '/statistic/day',
+      name: 'statisticday',
+      component: Statisticday
     },
     {
-      path: '/sleep',
-      name: 'sleep',
-      component: Sleep
+      path: '/statistic/month',
+      name: 'statisticmonth',
+      component: Statisticmonth
     },
     {
       path: '/test',

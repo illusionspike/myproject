@@ -133,6 +133,17 @@
                 <v-spacer></v-spacer>
                 <v-btn @click='submit' color="primary">Sign up</v-btn>
                 <v-btn @click='clear' color="error">Clear</v-btn>
+                <v-dialog v-model="dialog" persistent max-width="290">
+                  <v-card>
+                    <v-card-title class="headline">Submit confirmation</v-card-title>
+                    <v-card-text>Are you sure you want to submit this form ?</v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="green darken-1" flat @click="dialog = false">Disagree</v-btn>
+                      <v-btn color="green darken-1" flat @click="confirmSubmit">Agree</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -148,13 +159,14 @@
 import { validationMixin } from 'vuelidate'
 import { required, minLength, email, sameAs,between } from 'vuelidate/lib/validators'
 import axios from 'axios'
+import router from '../router'
   export default {
     mixins: [validationMixin],
     validations: {
       first_name: { required},
       last_name:{required},
       date:{required},
-      username:{required,minLength: minLength(4)},
+      username:{required,minLength: minLength(2)},
       email: { required, email },
       password: { required},
       confirm_password: {required,sameAsPassword: sameAs('password')},
@@ -163,6 +175,7 @@ import axios from 'axios'
       weight: { required}, 
     },
     data: () => ({
+        dialog: false,
         date: null,
         first_name: '',
         last_name: '',
@@ -173,7 +186,8 @@ import axios from 'axios'
         age:'',
         height: '',
         weight: '', 
-      menu2: false
+        menu2: false,
+        temp: null
     }),
     computed:{
       emailErrors () {
@@ -241,8 +255,8 @@ import axios from 'axios'
       },
     },
     methods: {
-      save (date) {
-        this.$refs.menu.save(date)
+      save (dateSelect) {
+        this.date = dateSelect;
       },
       clear(){
         this.$v.$reset()
@@ -259,26 +273,35 @@ import axios from 'axios'
       },
       submit (){
         this.$v.$touch()
-        /*let newUser = {
-          first_name: this.User.first_name,
-          last_name: this.User.last_name,
-          date: this.User.date,
-          age: this.User.age,
-          height: this.User.height,
-          weight: this.User.weight,
-          username: this.User.username,
-          email: this.User.email,
-          password: this.User.password,
-          confirm_password: this.User.confirm_password
-        }
-        console.log(newUser)
-        axios.post('http://localhost:3000/users',newUser)
-        .then(function(res){
-          console.log(res)
+        if (this.$v.$pending || this.$v.$error) return;
+        var temp
+        var tempCheck
+        axios
+        .get('http://35.197.155.73:4000/check/'+this.first_name+'/'+this.last_name+'/'+this.username+'/'+this.email)
+        .then(response => {
+          this.temp = response.data
+          this.tempCheck = response.data.split(' ')
+          if(this.tempCheck[this.tempCheck.length-1] == 'use'){
+
+          }else if(this.tempCheck[this.tempCheck.length-1] == 'ok'){
+            this.dialog = true
+          }
         })
-        .catch(function(err){
-          console.log(err)
-        });*/
+        .catch(error => {
+          console.log(error);
+        });
+      },
+      confirmSubmit(){
+        axios
+        .get('http://35.197.155.73:4000/writeinfor/'+this.first_name+'/'+this.last_name+'/'+this.date+'/'+this.age+'/'+this.height+'/'+this.weight+'/'+this.username+'/'+this.email+'/'+this.password)
+        .then(response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error);
+        });
+        this.dialog = false
+        router.replace('login')
       }
     }
   }

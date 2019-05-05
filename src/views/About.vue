@@ -12,7 +12,7 @@
         href="https://github.com/vuetifyjs/vuetify/releases/latest"
         target="_blank"
       >
-        <span class="mr-2 white--text">Supakit Dhamchatsoontree</span>
+        <span class="mr-2 white--text"></span>
       </v-btn>
     </v-toolbar>
   <v-container fluid fill-height>
@@ -38,7 +38,6 @@ import Drawer from '../components/Drawer'
         History,
         Drawer
       ,
-      Drawer
     },
     data() {
       return {

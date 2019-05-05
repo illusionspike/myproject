@@ -1,5 +1,6 @@
 <template>
 <div>
+  
   <v-card>
     <v-toolbar
       card
@@ -18,6 +19,13 @@
       </span>
     </v-btn>
     </v-toolbar>
+    <v-alert
+      v-model="alert"
+      dismissible
+      type="success"
+    >
+      This calibration is a success that is closable.
+    </v-alert>
     <v-card-text>
       <v-layout row>
         <v-flex md6>
@@ -294,24 +302,26 @@
 // eslint-disable-next-line
 /* eslint-disable */
 import axios from "axios";
-
 export default {
   data(){
   	return{
+      username: '',
       loader: null,
       loading4: false,
     	sensors: [],
       sensorVal: [],
       classes: [],
       classesVal: [],
+      alert: false
     }
   },
   watch: {
       loader () {
+
         const l = this.loader
         this[l] = !this[l]
         axios
-        .get("http://35.240.187.85:4000/setzero/")
+        .get("http://35.197.155.73:4000/setzero/")
         .then(response => {
           console.log(response)
         })
@@ -319,14 +329,18 @@ export default {
           console.log(error);
         });
 
-        setTimeout(() => (this[l] = false), 60000)
-
+        setTimeout(() =>{
+          this[l] = false
+          this.alert = true
+        }, 60000)
         this.loader = null
       }
   },
-  created (){
+  beforeCreate(){
+    this.username = this.$localStorage.get('usernameLogin')
+    console.log(this.username)
     axios
-        .get("http://35.240.187.85:4000/readcal/1")
+        .get("http://35.197.155.73:4000/readcal/1")
         .then(response => {
           this.sensors = response.data;
           this.sensorVal = this.sensors[0].data.toString().split("_");
@@ -336,7 +350,7 @@ export default {
           console.log(error);
         });
         axios
-        .get("http://35.240.187.85:4000/readpre/test/1")
+        .get('http://35.197.155.73:4000/readpre/'+this.username+'/1')
         .then(response => {
           this.classes = response.data;
           this.classesVal = this.classes[0].class.toString();
@@ -347,9 +361,10 @@ export default {
         });
   },
   mounted() {
+    this.username = this.$localStorage.get('usernameLogin')
     this.handle = setInterval(() => {
       axios
-        .get("http://35.240.187.85:4000/readcal/1")
+        .get("http://35.197.155.73:4000/readcal/1")
         .then(response => {
           this.sensors = response.data;
           this.sensorVal = this.sensors[0].data.toString().split("_");
@@ -359,7 +374,7 @@ export default {
           console.log(error);
         });
         axios
-        .get("http://35.240.187.85:4000/readpre/test/1")
+        .get('http://35.197.155.73:4000/readpre/'+this.username+'/1')
         .then(response => {
           this.classes = response.data;
           this.classesVal = this.classes[0].class.toString();
